@@ -1,0 +1,67 @@
+datalist { 
+    display: none;
+}
+label {
+  /* Other styling.. */
+  text-align: right;
+  clear: both;
+  float:left;
+  margin-right:15px;
+}
+
+.form-heigth{
+  height: auto;
+  width: 600px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 0px;
+  padding: 0px;
+  text-align:center;
+  
+}
+label {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 18px;
+  color: #333;
+  height: 20px;
+  width: 200px;
+  margin-top: 10px;
+  text-align: left;
+  clear: both;
+  float:left;
+  margin-right:15px;
+}
+input {
+  height: auto;
+  width: 250px;
+  border: 1px solid #000;
+  margin-top: 10px;
+  float: left;
+  color: black;
+  border-radius: 5px;
+  padding: 5px;
+  background: #EBEBEB;
+}
+.submitbtn{
+  margin-left: 25%;
+  height: auto;
+  width: 250px;
+  border: 1px solid #000;
+  margin-top: 10px;
+  float: left;
+  color: black;
+  border-radius: 5px;
+  padding: 5px;
+  background: #EBEBEB;
+}
+input:hover{
+    background: white;
+    transition: 0.5s;
+}
+button:hover{
+    background: white;
+    transition: 0.5s;
+}
+.formcoler{
+	background-color: white;
+}
