@@ -10,13 +10,14 @@ label {
 }
 
 .form-heigth{
-  height: auto;
+  background-color: #FFF;
+  height: 600px;
   width: 600px;
   margin-right: auto;
   margin-left: auto;
   margin-top: 0px;
   padding: 0px;
-  text-align:center;
+  /*text-align:center;*/
   
 }
 label {
@@ -29,14 +30,14 @@ label {
   text-align: left;
   clear: both;
   float:left;
-  margin-right:15px;
+  /*margin-right:15px;*/
 }
 input {
   height: auto;
   width: 250px;
   border: 1px solid #000;
   margin-top: 10px;
-  float: left;
+  /*float: left;*/
   color: black;
   border-radius: 5px;
   padding: 5px;
@@ -56,12 +57,22 @@ input {
 }
 input:hover{
     background: white;
-    transition: 0.5s;
 }
 button:hover{
     background: white;
-    transition: 0.5s;
+    
 }
-.formcoler{
-	background-color: white;
+input[type=radio] {
+    display: inline-flex;
+    width: auto;
 }
+.radioset{
+  width: 250px;
+  margin-top: 10px;
+  float: left;
+  color: black;
+}
+.formcolor{
+    padding-left: 25px;
+}
+

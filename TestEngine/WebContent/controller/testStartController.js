@@ -6,6 +6,16 @@ app.controller('testController', function ($scope,$http, $interval, $filter) {
 	$scope.testVisible=true;
 	$scope.count=-1;
 	$scope.questionList=[];
+	$scope.left=function(){
+        count=0;
+        $scope.questionList.filter(function(item){
+            if (item.answer==""){
+                count++;
+            }
+        });
+        return count;
+    }	
+	
 	$scope.loadTest=function(){
 		console.log("controller called");
 		
@@ -33,7 +43,7 @@ app.controller('testController', function ($scope,$http, $interval, $filter) {
          method : 'POST',
          //url : "courseServlet?action=SELECT"
          url : "getTestServlet",
-         data : {'action':'SELECT'}
+         data : {'action':'SELECT','testid':getParameterByName('id')}
          ,
          headers: {
              'Content-Type': 'application/json'
@@ -43,16 +53,22 @@ app.controller('testController', function ($scope,$http, $interval, $filter) {
 	 
 	 var dataSubmit=new submit(data.courseid,data.facultyID,data.testName,data.testDuration,data.MinMarks,data.totalMarks,data.testid);
 	 
+	 if(data.questionList){
 	 localStorage.testDetails=JSON.stringify(dataSubmit);
 	 localStorage.questionList=JSON.stringify(data.questionList);
+	 
+	 
 	 //localStorage.currentQuestion=-1;
 	 //$scope.count=localStorage.getItem("currentQuestion");
-		$scope.testDetails=JSON.parse(localStorage.getItem("testDetails"));
+	$scope.testDetails=JSON.parse(localStorage.getItem("testDetails"));
 		
      $scope.questionList=JSON.parse(localStorage.getItem("questionList"));
      
+     
+     
      $scope.StartTimer();
      $scope.nextQ();
+	 }
 	 //$scope.testOperation.questionList = data;
  }).error(function(data, status, headers, config) {
          // called asynchronously if an error occurs
@@ -72,7 +88,9 @@ app.controller('testController', function ($scope,$http, $interval, $filter) {
 	$scope.finishTime=new Date().setMinutes(new Date().getMinutes());
 	//Timer start function.
 	$scope.StartTimer = function () {
-		
+
+		$scope.total=$scope.questionList.length;
+		console.log("total questions :"+$scope.total);
 		
 	    //Set the Timer start message.
 	    //$scope.Message = "Timer started. ";
@@ -123,6 +141,7 @@ app.controller('testController', function ($scope,$http, $interval, $filter) {
         $scope.optionC=$scope.questionList[$scope.count].optionC;
         $scope.optionD=$scope.questionList[$scope.count].optionD;
         localStorage.currentQuestion=$scope.count-1;
+        $scope.change($scope.count);
     };
     $scope.previousQ=function(){
         console.log("previous called");
@@ -134,13 +153,32 @@ app.controller('testController', function ($scope,$http, $interval, $filter) {
         $scope.optionC=$scope.questionList[$scope.count].optionC;
         $scope.optionD=$scope.questionList[$scope.count].optionD;
         localStorage.currentQuestion=$scope.count-1;
+        $scope.change($scope.count);
     };
     $scope.answered=function(val){
         $scope.questionList[$scope.count].answer=val;
         console.log($scope.questionList[$scope.count].answer);
         localStorage.currentQuestion=$scope.count-1;
         localStorage.questionList=JSON.stringify($scope.questionList);
+        
     };
+    
+    $scope.change=function(count){
+    	document.getElementsByName("question")[0].checked=false;
+    	document.getElementsByName("question")[1].checked=false;
+    	document.getElementsByName("question")[2].checked=false;
+    	document.getElementsByName("question")[3].checked=false;
+    	
+    	//document.getElementById("questionopt").checked=false;
+    	/*$scope.questionopt[0]=false;
+    	$scope.questionopt[1]=false;
+    	$scope.questionopt[2]=false;
+    	$scope.questionopt[3]=false;*/
+    	/*$scope.optionA.Selected=false;
+        $scope.optionB=false;
+        $scope.optionC=false;
+        $scope.optionD=false;*/
+    }
     $scope.submit=function(){
         console.log("submit called");
 
@@ -157,6 +195,8 @@ app.controller('testController', function ($scope,$http, $interval, $filter) {
             
     }).success(function(data, status, headers, config) {
             //$scope.courseData = data;
+    	//localStorage.clear();
+    	localStorage.removeItem("questionList");
     	$scope.result=data;
     	$scope.testVisible=false;
     	localStorage.result=JSON.stringify($scope.result);
@@ -181,73 +221,5 @@ function submit(courseId,facultyId,testName,testTime,minMarks,totalMarks,testid)
     
 }
 
-/*
-app.controller('LoginCtrl', function($scope,loginFactory,$location){
-    $scope.login = function() {
-        console.log("Login Call...");
-        //loginFactory.postJSON($scope.email,$scope.password)
-        var promise = loginFactory.postJSON($scope.email, $scope.password);
-        promise.then(function (object) {
-            //console.log(object);
 
-            $scope.val = object.msg;
-            $location.path('homeStudent');
-            console.log("Promise Call"),
-                function (reason) {
-                    //alert('Failed: ' + reason);
-                    $scope.result = reason;
-                }
-        });
-        $scope.result = "Dynamic Values from Controller";
-        //$scope.nextQ();
-    }
-
-});
-
-app.controller('RegisterCtrl', function($scope,registerFactory){
-    $scope.register = function(){
-        console.log('Register Call...');
-        console.log($scope.email + " " + $scope.password);
-        registerFactory.postJSON($scope.email, $scope.password);
-    }
-});
-
-app.controller('uploadQuestionCtrl', function($scope,uploadQuestionFactory){
-
-
-
-     function submit(testName,questions){
-         this.testName=testName;
-         this.questions=questions;
-     }
-
-    $scope.questionListUpload=[];
-    $scope. submit= function(){
-        console.log('UploadQuestionCtrl Submit Call...');
-        var questionObj=new Question($scope.questionNumber,$scope.question,$scope.optionA,$scope.optionB,$scope.optionC,$scope.optionD,$scope.answer);
-        //$scope.questionListUpload.push({questionNumber:$scope.questionNumber,question:$scope.question,optionA:$scope.optionA,optionB:$scope.optionB,optionC:$scope.optionC,optionD:$scope.optionD,answer:$scope.answer});
-        $scope.questionListUpload.push(questionObj);
-    }
-    $scope. upload= function(){
-        console.log('UploadQuestionCtrl Upload Call...');
-        var dataSubmit=new submit($scope.testName,$scope.questionListUpload)
-        var promise =uploadQuestionFactory.postJSON(dataSubmit);
-
-        promise.then(function(object) {
-            $scope.resultMsg =object;
-            console.log("Result in controllers object"+$scope.resultMsg);
-
-        });
-    }
-    function Question(questionNumber,question,optionA,optionB,optionC,optionD,answer){
-        this.questionNumber=questionNumber;
-        this.question=question;
-        this.optionA=optionA;
-        this.optionB=optionB;
-        this.optionC=optionC;
-        this.optionD=optionD;
-        this.answer=answer;
-    }
-   
-});*/
 

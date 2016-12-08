@@ -13,37 +13,38 @@
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/font-awesome.min.css">
 <link href="css/explore.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="js/jqplot/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
 <!--<link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">-->
-</head>
 <body>
   <div class="row">
    <header class="group">
-       <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom colornav color">
+       <nav id="mainNav" class="navbar navbar-fixed-top navbar-custom colornav color">
     <div class="container">
         <div class="navbar-header page-scroll">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand" href="#page-top">Online Test Engine</a>
+            <a class="navbar-brand" href="index.jsp">Online Test Engine</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                 <li class="page-scroll">
-                    <a href="HomePage.html">Home</a>
+                    <a href="index.jsp">Home</a>
                 </li>
                 <li class="page-scroll">
                     <a href="#page-top">Explore</a>
                 </li>
                 <li class="page-scroll">
-                    <a href="registraton.html">Registration</a>
+                    <a href="register.jsp">Registration</a>
                 </li>
                 <li class="page-scroll">
-                    <a href="Login.html">Login</a>
+                    <a href="Login.jsp">Login</a>
                 </li>
                 <li class="page-scroll dropdown">
-                    <a href="contactus.html">Contact us</a>      
+                    <a href="contactus.jsp">Contact us</a>      
                 </li>
             </ul>
         </div>
@@ -59,13 +60,12 @@
          <article>
 			<h1>About us</h1>
 			<hr>
-			<p>Online test engine is an educational platform featuring the quickest, simplest way for organizations to train students,         for FREE. The platform features an intuitive, easy-to-use interface to create, deliver and track training of students. 
+			<p>Online test engine is an educational platform featuring the quickest, simplest way for organizations to train students, for FREE. The platform features an intuitive, easy-to-use interface to create, deliver and track training of students. 
                 It offers a way to measure, analyses and view results of test takers. Its modern and clean theme is optimized for almost all devices including mobile and tabs. We believe preparation can be more social and fun and far more techno-friendly. With an internet-enabled device in the hands of most students, we felt a need for mobile test preparation platform giving students freedom to learn and prepare anywhere, anytime.
                 <ul>
                     <li>Free service to all institutes.</li>
                     <li>User Friendly interface.</li>
                     <li>Online Tests.</li>
-                    <li>Graphical Analysis of results.</li>
                     <li>Accessibility anywhere any time.</li>
                     <li>Zero installation. </li>                                  
                     <li>No development or maintenance cost.</li>
@@ -77,7 +77,6 @@
             <p>    
             The purpose of the project is to provide online facility to Institutes to conduct online exams and to Students to give online exams. Institutes can enter and edit the questions along with the students list. Also they can view the result. Students can login and give their respective exams and view their score then and there. Others can view sample papers to get look and feel of the online examination system.
             </p>
-            
 		</article>
     </main>
     <footer>
@@ -110,8 +109,8 @@
                     </ul>
                 </div>
                 <div class="footer-col col-md-4">
-                    <h3>About Online  Test Engine</h3>
-                    <p>Online Test Engine Provide online examination facility to college students.</p>
+                    <h3>About Online Test Engine</h3>
+					<p>Online Test Engine Provide online examination facility to collage students.</a></p>
                 </div>
             </div>
         </div>

@@ -1,29 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-     <%
-     String user = null;
-     if(session.getAttribute("username") == null || session.getAttribute("roles")==null){
-     	
-     	response.sendRedirect("index.jsp");
-     	
-     }else{ 
-     	if(session.getAttribute("roles").toString().equals("3")){
-     	user = (String) session.getAttribute("username");
-     	}
-     	else{
-     		response.sendRedirect("index.jsp");
-     	}
-     		
-     	}
-String userName = null;
-String sessionID = null;
-Cookie[] cookies = request.getCookies();
-if(cookies !=null){
-for(Cookie cookie : cookies){
-	if(cookie.getName().equals("username")) userName = cookie.getValue();
-	if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
+    <%
+response.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
+response.setDateHeader("Expires", 0);
+response.setHeader("Pragma", "no-cache");
+String user = null;
+if(session.getAttribute("username") == null || session.getAttribute("role") == null){
+	response.sendRedirect("index.jsp");
 }
-%> 
+else{ 
+	int role=Integer.parseInt(session.getAttribute("role").toString());
+	if(role!=3){
+		response.sendRedirect("index.jsp");
+	}
+	else{
+	user = (String) session.getAttribute("username");
+	}
+}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,18 +30,55 @@ for(Cookie cookie : cookies){
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="css/bootstrap.min2.css" rel="stylesheet">
 
-<!--<link href="css/freelancer.min.css" rel="stylesheet" type="text/css">-->
+
 <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
 <link href="https://fonts.googleapis.com/css?family=Ubuntu:500|Vollkorn" rel="stylesheet">
 <link rel="stylesheet" href="css/animate.css">
 <link rel="stylesheet" href="css/adminpage.css">
-<link rel="stylesheet" href="css/modify.css">
-<link rel="stylesheet" href="css/Registration.css">
 <link rel="stylesheet" href="css/addcourse.css">
 
+<script src="controller/angular.min.js"></script>
+<script>
+var app=angular.module("myApp",[]);
+
+app.factory("pageValuefactory",function($http,$q){
+    var factoryObject = {};
+    factoryObject.getValue=function(){
+       var defer = $q.defer(); $http.post("getPagesCommonDataServlet",{'action':'COMMONVALUES'}).then(function(data){
+            defer.resolve(data)
+        },function(error){
+            defer.reject(error);
+        });
+    return defer.promise;
+    }
+    return factoryObject;
+});
+
+
+app.controller("roleCtrl",function($scope,pageValuefactory){
+	 $scope.pageValue=function(){
+	    	var promise = pageValuefactory.getValue();  
+	            promise.then(function(data){
+	            	console.log("page data is "+data.data);
+	                $scope.pageData = data.data;
+	                //console.log(rolesList);
+	            },function(error){
+	                $scope.error = error;
+	            })
+	        }
+
+	    $scope.init=function(){
+				$scope.pageValue();
+	        }
+	    
+	});
+
+
+
+	</script>
 
 </head>
-<body id="page-top" class="index">
+<body id="page-top" class="index" ng-app="myApp" ng-controller="roleCtrl" ng-init="init()">
     <div class="col-xl-12">
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom colornav">
     <div class="container">
@@ -56,13 +87,16 @@ for(Cookie cookie : cookies){
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand" href="#page-top">Online Test Engine</a>
+            <a class="navbar-brand" href="index.jsp">Online Test Engine</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                 <li class="page-scroll">
+                    <a href="studentpage.jsp">Home</a>
+                </li>
+				<li class="page-scroll">
                     <a onclick="logout()" href="#">Logout</a>
                 </li>
             </ul>
@@ -107,7 +141,7 @@ for(Cookie cookie : cookies){
    <div class="panel-heading" role="tab" id="headingfour">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#" aria-expanded="true" aria-controls="collapsefour">
-         Studnet Details
+         Student Details
         </a>
       </h4>
     </div>
@@ -132,7 +166,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">50</div>
+							<div class="large">{{pageData.student}}</div>
 							<div class="text-muted">Total Student</div>
 						</div>
 					</div>
@@ -142,10 +176,10 @@ for(Cookie cookie : cookies){
 				<div class="panel panel-widget">
 					<div class="row no-padding">
 						<div class="col-sm-3 col-lg-5 widget-left panel-red">
-							<svg class="glyph stroked email"><use xlink:href="#stroked-email"/></svg></svg>
+							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"/></svg></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">25</div>
+							<div class="large">{{pageData.faculty}}</div>
 							<div class="text-muted">Total Faculty</div>
 						</div>
 					</div>
@@ -153,23 +187,33 @@ for(Cookie cookie : cookies){
 			</div>
           <div id="mainContent">
           <h2 style="text-align: center;">Change Password</h2>
-          <hr>
-        <form class="form-signin" name="changepwdform" onsubmit="return validate();">
+          <hr>              
+              <form class="form-signin" name="changepwdform" action="changePasswordServlet" method="post" onsubmit="return validate();">
             	<table>
             		<tr>
             		<td><label for="">Old Password:</label></td>
-        			<td><input id="password" name="oldpwd"/></td></tr>
+        			<td><input type="password" id="password" name="oldpwd" placeholder="Enter Old Password"/></td></tr>
         		<tr>
             		<td><label for="">New Password:</label></td>
-        			<td><input id="password" name="newpwd"/></td></tr>
+        			<td><input type="password" id="password" name="newpwd" placeholder="Enter New Password"/></td></tr>
 				<tr>
             		<td><label for="">Confirm Password:</label></td>
-        			<td><input id="password" name="cnewpwd"/></td></tr>
+        			<td><input type="password" id="password" name="cnewpwd" placeholder="Confirm Password"/></td></tr>
                   <tr><td></td><td><div class="checkbox">
                         <input type="submit" name="submit" class="button" value="Change Password"/>
+                        
+                        
                    </div></td></tr>
-              </form>
+                   <tr><td colspan="2">
+                     <% String status="";
+        		if(request.getParameter("status")!=null){
+        			status=request.getParameter("status");
+        		}
+        %>
+        <p style="color: black; font-size: 18px; margin: 40px; font-weight: 700; capitalize; text-align: center;"><%=status %></p>
+        </td></tr>
               </table>
+           </form>
     </div>
     </div>
     </div>
@@ -187,7 +231,5 @@ for(Cookie cookie : cookies){
 <script src="js/lumino.glyphs.js"></script>
 <script src="js/ajax.js"></script>
 <script src="js/resetpage.js"></script>
-
 </body>
 </html>
- <%}%> 

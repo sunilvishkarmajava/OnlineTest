@@ -6,8 +6,7 @@ label {
 }
 #form {
   /*background-image: url("../images/addcourseBG.jpg");*/
-  background-color: #FFF;
-  height: 600px;
+  background-color: #FFF;  
   width: 600px;
   margin-right: auto;
   margin-left: auto;
@@ -93,12 +92,17 @@ button:hover{
     left: 20%;*/
     width: 100%;
     text-align: center;
+    margin-top: -50px important;
 }
 .group:before
 {
     clear: both;
     content: "";
     display: block;
+}
+.padstyle{
+	padding-left: 20px;
+	padding-right: 20px;
 }
 select{
   /*padding-bottom: 5px;*/

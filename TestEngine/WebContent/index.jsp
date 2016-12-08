@@ -15,8 +15,6 @@
 <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/animate.css">
 <link href="css/custom.css" rel="stylesheet" type="text/css">
-<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-<link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css"> -->
 </head>
 <body id="page-top" class="index">
 <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom colornav color">
@@ -26,7 +24,7 @@
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand" href="#page-top">Online Test Engine</a>
+            <a class="navbar-brand" href="index.jsp">Online Test Engine</a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -44,7 +42,7 @@
                     <a href="Login.jsp">Login</a>
                 </li>
                 <li class="page-scroll dropdown">
-                    <a href="contecus.jsp">Contact us</a>
+                    <a href="contactus.jsp">Contact us</a>
                 </li>
             </ul>
         </div>
@@ -103,9 +101,8 @@
     <div class="thumbnail">
       <img src="images/online-test.png" alt="OnlineTest"  class="img-circle">
       <div class="caption text-center">
-        <h3>Online Examination</h3>
-        <p>Give online exam form eny place.</p>
-        
+        <h3>Online Examination and read coure material</h3>
+        <p>Take notes online and give online exam.</p>
       </div>
     </div>
   </div>
@@ -114,7 +111,7 @@
       <img src="images/1_009.png" alt="Feedback" class="img-circle">
       <div class="caption text-center">
         <h3>Feedback and Queries</h3>
-        <p>Discuss there queries and feedback.</p>
+        <p>Discuss there examination queries and feedback.</p>
       </div>
     </div>
   </div>
@@ -156,8 +153,8 @@
                     </ul>
                 </div>
                 <div class="footer-col col-md-4">
-                    <h3>About Online  Test Engine</h3>
-                    <p>Online Test Engine Provide online examination facility to College students.</p>
+                    <h3>About Online Test Engine</h3>
+					<p>Online Test Engine Provide online examination facility to collage students.</a></p>
                 </div>
             </div>
         </div>
@@ -174,7 +171,7 @@
 </footer>
 
 </body>
-<script type="application/javascript" src="js/jquery-1.12.3.min.js"></script>
+<script type="application/javascript" src="js/jquery-2.0.3.min.js"></script>
 <script type="application/javascript" src="js/bootstrap.min.js"></script>
 <script type="application/javascript" src="js/homepage.js"></script>
 </html>

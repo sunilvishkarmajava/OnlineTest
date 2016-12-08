@@ -1,30 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-     <%
-     String user = null;
-     if(session.getAttribute("username") == null || session.getAttribute("roles")==null){
-     	
-     	response.sendRedirect("index.jsp");
-     	
-     }else{ 
-     	if(session.getAttribute("roles").toString().equals("3")){
-     	user = (String) session.getAttribute("username");
-     	}
-     	else{
-     		response.sendRedirect("index.jsp");
-     	}
-     		
-     	}
-
-String userName = null;
-String sessionID = null;
-Cookie[] cookies = request.getCookies();
-if(cookies !=null){
-for(Cookie cookie : cookies){
-	if(cookie.getName().equals("username")) userName = cookie.getValue();
-	if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
+ <%
+response.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
+response.setDateHeader("Expires", 0);
+response.setHeader("Pragma", "no-cache");
+String user = null;
+if(session.getAttribute("username") == null || session.getAttribute("role") == null){
+	response.sendRedirect("index.jsp");
 }
-%> 
+else{ 
+	int role=Integer.parseInt(session.getAttribute("role").toString());
+	if(role!=3){
+		response.sendRedirect("index.jsp");
+	}
+	else{
+	user = (String) session.getAttribute("username");
+	}
+}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,8 +36,76 @@ for(Cookie cookie : cookies){
 <link rel="stylesheet" href="css/adminpage.css">
 <link rel="stylesheet" href="css/modify.css">
 
+<script src="controller/angular.min.js"></script>
+   
+<script>
+var app=angular.module("myApp",[]);
+
+app.factory("loginfactory",function($http,$q){
+    var factoryObject = {};
+    factoryObject.doLogin=function(){
+       var defer = $q.defer(); $http.post("courseFetchServlet",{'action':'COMMONVALUES'}).then(function(data){
+            defer.resolve(data)
+        },function(error){
+            defer.reject(error);
+        });
+    return defer.promise;
+    }
+    return factoryObject;
+});
+
+app.factory("pageValuefactory",function($http,$q){
+    var factoryObject = {};
+    factoryObject.getValue=function(){
+       var defer = $q.defer(); $http.post("getPagesCommonDataServlet",{'action':'COMMONVALUES'}).then(function(data){
+            defer.resolve(data)
+        },function(error){
+            defer.reject(error);
+        });
+    return defer.promise;
+    }
+    return factoryObject;
+});
+
+
+app.controller("roleCtrl",function($scope,loginfactory,pageValuefactory){
+	//$scope.rolesList=[];
+	
+	
+    $scope.fetchRole=function(){
+	var promise = loginfactory.doLogin();  
+        promise.then(function(data){
+        	console.log("data is "+data.data);
+            $scope.rolesList = data.data;
+            //console.log(rolesList);
+        },function(error){
+            $scope.error = error;
+        })
+    }
+
+    $scope.pageValue=function(){
+    	var promise = pageValuefactory.getValue();  
+            promise.then(function(data){
+            	console.log("page data is "+data.data);
+                $scope.pageData = data.data;
+                //console.log(rolesList);
+            },function(error){
+                $scope.error = error;
+            })
+        }
+
+    $scope.init=function(){
+			$scope.fetchRole();
+			$scope.pageValue();
+        }
+    
+});
+
+
+
+</script>
 </head>
-<body id="page-top" class="index">
+<body id="page-top" class="index" ng-app="myApp" ng-controller="roleCtrl" ng-init="init()">
     <div class="col-xl-12">
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom colornav">
     <div class="container">
@@ -53,12 +114,15 @@ for(Cookie cookie : cookies){
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand" href="#page-top">Online Test Engine</a>
+            <a class="navbar-brand" href="index.jsp">Online Test Engine</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
+				<li class="page-scroll">
+                    <a href="studentpage.jsp">Home</a>
+                </li>
                 <li class="page-scroll">
                     <a onclick="logout()" href="#">Logout</a>
                 </li>
@@ -104,7 +168,7 @@ for(Cookie cookie : cookies){
    <div class="panel-heading" role="tab" id="headingfour">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#" aria-expanded="true" aria-controls="collapsefour">
-         Studnet Details
+         Student Details
         </a>
       </h4>
     </div>
@@ -129,7 +193,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">50</div>
+							<div class="large">{{pageData.student}}</div>
 							<div class="text-muted">Total Student</div>
 						</div>
 					</div>
@@ -139,10 +203,10 @@ for(Cookie cookie : cookies){
 				<div class="panel panel-widget">
 					<div class="row no-padding">
 						<div class="col-sm-3 col-lg-5 widget-left panel-red">
-							<svg class="glyph stroked email"><use xlink:href="#stroked-email"/></svg></svg>
+							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"/></svg></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">25</div>
+							<div class="large">{{pageData.faculty}}</div>
 							<div class="text-muted">Total Faculty</div>
 						</div>
 					</div>
@@ -151,60 +215,26 @@ for(Cookie cookie : cookies){
           <div id="mainContent">
             <h2 style="text-align: center;">Total Courses</h2>
           <hr>
-        <table class="table sidestyle2">
+        <table class="table sidestyle2" >
             <thead>
             <tr>
                 <th>S.No.</th>
                 <th>Course Name</th>
                 <th>Details</th>
-                <th>Ragister Date</th>
+                <th>Register Date</th>
                 <th>View Course</th>
                 
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Java Core</td>
-                <td>Java Basic course</td>
-                <td>05-7-2016</td>
-                <td><a href="coursecontent.jsp">Start Course</a></td>
+            <tr ng-repeat="role in rolesList">
+                <th scope="row">{{role.courseID}}</th>
+                <td>{{role.title}}</td>
+                <td>{{role.Details}}</td>
+                <td>{{role.ragister_date}}</td>
+                <td><a href="studentcoursecontent.jsp?id={{role.courseID}}">Start Course</a></td>
             </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Mean</td>
-                <td>Mean for user interface development</td>
-                <td>12-8-2016</td>
-                <td><a href="coursecontent.jsp">Start Course</a></td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>Html&JS</td>
-                <td>Basic of Website development</td>
-                <td>12-5-2016</td>
-                <td><a href="coursecontent.jsp">Start Course</a></td>
-            </tr>
-            <tr>
-                <th scope="row">4</th>
-                <td>Advance Java</td>
-                <td>Java advance course </td>
-                <td>1-06-2015</td>
-                <td><a href="coursecontent.jsp">Start Course</a></td>
-            </tr>
-            <tr>
-                <th scope="row">5</th>
-                <td>Ruby</td>
-                <td>Ruby Course Basic</td>
-                <td>12-6-2016</td>
-                <td><a href="coursecontent.jsp">Start Course</a></td>
-            </tr>
-            <tr>
-                <th scope="row">7</th>
-                <td>Python</td>
-                <td>Python Course Basic</td>
-                <td>06-11-2015</td>
-                <td><a href="coursecontent.jsp">Start Course</a></td>
-                </tr>
+            
             </tbody>
         </table>
     </div>
@@ -225,4 +255,3 @@ for(Cookie cookie : cookies){
 <script src="js/ajax.js"></script>
 </body>
 </html>
-<%}%> 

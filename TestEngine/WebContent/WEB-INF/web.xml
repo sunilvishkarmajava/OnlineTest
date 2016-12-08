@@ -11,6 +11,6 @@
   </welcome-file-list>
   <servlet>
     <servlet-name>courseServlet</servlet-name>
-    <servlet-class>com.edu.testengine.servlets.courseServlet</servlet-class>
+    <servlet-class>com.edu.lms.servlets.courseServlet</servlet-class>
   </servlet>
 </web-app>

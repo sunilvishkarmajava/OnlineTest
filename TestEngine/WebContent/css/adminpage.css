@@ -35,14 +35,19 @@ body{
     left: 0;
     margin-bottom: 10px !important;
 }
+.imagewidth{
+    max-width: 103%;
+    margin-left: -3%;
+}
 .navbar-default .navbar-brand {
     color: white !important;
+    padding-top: 15px;
 }
 .navbar-nav>li>a{
     color: white !important;
 }
 .navbar-nav>li>a:hover{
-    color: green!important;
+    color: green !important;
 }
 .left ul{
     list-style: none;
@@ -69,25 +74,6 @@ body{
     text-align: center;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
-}
-/*.panel-blue .widget-left {
-    background: #30a5ff;
-    color: #fff;
-}
-.panel-orange .widget-left {
-    background: #ffb53e;
-    color: #fff;
-}
-.panel-teal .widget-left {
-    background: #1ebfae;
-    color: #fff;
-}
-.panel-red .widget-left {
-    background: #f9243f !important;
-    color: #fff !important;
-}*/
-.text{
-	text-align: center;
 }
 .panel-title{
     text-align: center;
@@ -158,21 +144,9 @@ body{
 .widget-right .text-muted {
     color: #9fadbb;
 }
-
-.contentdisplay{
-	padding-top: 50px !important;
+#mainContent{
+    margin-left: 2%;
 }
- /*------------------send box------------------------*/
-/* .chat .panel-body {
-    overflow-y: scroll;
-    height: 300px;
+#form{
+    background-color: transparent;
 }
-
-.glyph1 {
-    width: 26px !important;
-    height: 26px !important;
-    margin: 0 10px 0 0 !important;
-    stroke-width: 2px;
-    vertical-align: middle;
-} 
- */

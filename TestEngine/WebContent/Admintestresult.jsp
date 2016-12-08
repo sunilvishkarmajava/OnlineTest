@@ -1,19 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-    <%--     <%
+    <%
+response.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
+response.setDateHeader("Expires", 0);
+response.setHeader("Pragma", "no-cache");
 String user = null;
-if(session.getAttribute("username") == null){
+if(session.getAttribute("username") == null || session.getAttribute("role") == null){
 	response.sendRedirect("index.jsp");
-}else user = (String) session.getAttribute("username");
-String userName = null;
-String sessionID = null;
-Cookie[] cookies = request.getCookies();
-if(cookies !=null){
-for(Cookie cookie : cookies){
-	if(cookie.getName().equals("username")) userName = cookie.getValue();
-	if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
 }
-%> --%>
+else{ 
+	int role=Integer.parseInt(session.getAttribute("role").toString());	
+	if(role!=1){
+		response.sendRedirect("index.jsp");
+	}
+	else{
+	user = (String) session.getAttribute("username");
+	}
+}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,9 +35,38 @@ for(Cookie cookie : cookies){
 <link rel="stylesheet" href="css/animate.css">
 <link rel="stylesheet" href="css/adminpage.css">
 <link rel="stylesheet" href="css/modify.css">
+<script src="controller/angular.min.js"></script>
+<script>
+var app=angular.module("viewtestresultapp",[]);
 
+app.factory("testresultviewfactory",function($http,$q){
+    var factoryObject = {};
+    factoryObject.doLogin=function(){
+       var defer = $q.defer(); $http.post("usertestResultServlet",{'action':'COMMONVALUES'}).then(function(data){
+            defer.resolve(data)
+        },function(error){
+            defer.reject(error);
+        });
+    return defer.promise;
+    }
+    return factoryObject;
+});
+
+app.controller("studentresultviewCtrl",function($scope,testresultviewfactory){
+	//$scope.rolesList=[];
+    $scope.fetchtestresult=function(){
+	var promise = testresultviewfactory.doLogin();  
+        promise.then(function(data){
+        	console.log("data is "+data);
+            $scope.testList = data.data;
+        },function(error){
+            $scope.error = error;
+        })
+    }
+})
+</script>
 </head>
-<body id="page-top" class="index">
+<body id="page-top" class="index" ng-app="viewtestresultapp" ng-controller="studentresultviewCtrl" ng-init="fetchtestresult()">
     <div class="col-xl-12">
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom colornav">
     <div class="container">
@@ -42,12 +75,15 @@ for(Cookie cookie : cookies){
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand" href="#page-top">Online Test Engine</a>
+            <a class="navbar-brand" href="index.jsp">Online Test Engine</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
+			<li class="page-scroll">
+                    <a href="AdminPage.jsp" >Home</a>
+      			</li>
                 <li class="page-scroll">
                     <a onclick="logout()" href="#">Logout</a>
                 </li>
@@ -86,7 +122,7 @@ for(Cookie cookie : cookies){
     <div id="collapsetwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingtwo">
       <div class="panel-body">
        <ul class="nav-sidebar nav">
-        <li><a onclick="showContent('addteacher.jsp')" href="#">Add Faculty</a></li>
+        <li><a href="addfaculty.jsp">Add Faculty</a></li>
           </ul>
       </div>
   </div>
@@ -204,47 +240,12 @@ for(Cookie cookie : cookies){
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>J12345</td>
-                <td>JV125</td>
-                <td>JAVA_Core</td>
-                <td>180 Minutes</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>J12345</td>
-                <td>JV125</td>
-                <td>JAVA_Core</td>
-                <td>180 Minutes</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>J12345</td>
-                <td>JV125</td>
-                <td>JAVA_Core</td>
-                <td>180 Minutes</td>
-            </tr>
-            <tr>
-                <th scope="row">4</th>
-                <td>J12345</td>
-                <td>JV125</td>
-                <td>JAVA_Core</td>
-                <td>180 Minutes</td>
-            </tr>
-            <tr>
-                <th scope="row">5</th>
-                <td>J12345</td>
-                <td>JV125</td>
-                <td>JAVA_Core</td>
-                <td>180 Minutes</td>
-            </tr>
-            <tr>
-                <th scope="row">7</th>
-                <td>J12345</td>
-                <td>JV125</td>
-                <td>JAVA_Core</td>
-                <td>180 Minutes</td>
+            <tr ng-repeat="test in testList">
+                <th scope="row">{{test.resultid}}</th>
+                <td>{{test.userid}}</td>
+                <td>{{test.testid}}</td>
+                <td>{{test.marks}}</td>
+                <td>{{test.test_date}}</td>
             </tr>
             </tbody>
         </table>

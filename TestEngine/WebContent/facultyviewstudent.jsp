@@ -1,22 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<%--     <%
+<%
 response.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
 response.setDateHeader("Expires", 0);
 response.setHeader("Pragma", "no-cache");
 String user = null;
-if(session.getAttribute("username") == null){
+if(session.getAttribute("username") == null || session.getAttribute("role") == null){
 	response.sendRedirect("index.jsp");
-}else user = (String) session.getAttribute("username");
-String userName = null;
-String sessionID = null;
-Cookie[] cookies = request.getCookies();
-if(cookies !=null){
-for(Cookie cookie : cookies){
-	if(cookie.getName().equals("username")) userName = cookie.getValue();
-	if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
 }
-%> --%>
+else{ 
+	int role=Integer.parseInt(session.getAttribute("role").toString());
+	if(role!=2){
+		response.sendRedirect("index.jsp");
+	}
+	else{
+	user = (String) session.getAttribute("username");
+	}
+}
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,7 +26,7 @@ for(Cookie cookie : cookies){
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="">
-<title>Faculty: Sunil</title>
+<title>Welcome: <%=session.getAttribute("username")%></title>
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="css/bootstrap.min2.css" rel="stylesheet">
 <!--<link href="css/freelancer.min.css" rel="stylesheet" type="text/css">-->
@@ -38,8 +39,69 @@ for(Cookie cookie : cookies){
 <script type="application/javascript" src="js/bootstrap.min.js"></script>
 <script src="js/lumino.glyphs.js"></script>
 <script src="js/ajax.js"></script>
+<script src="controller/angular.min.js"></script>
+<script>
+var app=angular.module("viewstudentapp",[]);
+
+app.factory("studentviewfactory",function($http,$q){
+    var factoryObject = {};
+    factoryObject.doLogin=function(){
+       var defer = $q.defer(); $http.post("studentFetchServlet",{'action':'COMMONVALUES'}).then(function(data){
+            defer.resolve(data)
+        },function(error){
+            defer.reject(error);
+        });
+    return defer.promise;
+    }
+    return factoryObject;
+});
+
+app.factory("pageValuefactory",function($http,$q){
+    var factoryObject = {};
+    factoryObject.getValue=function(){
+       var defer = $q.defer(); $http.post("getPagesCommonDataServlet",{'action':'COMMONVALUES'}).then(function(data){
+            defer.resolve(data)
+        },function(error){
+            defer.reject(error);
+        });
+    return defer.promise;
+    }
+    return factoryObject;
+});
+
+app.controller("studentviewCtrl",function($scope,studentviewfactory,pageValuefactory){
+	//$scope.rolesList=[];
+    $scope.fetchRole=function(){
+	var promise = studentviewfactory.doLogin();  
+        promise.then(function(data){
+        	console.log("data is "+data.data);
+            $scope.rolesList = data.data;
+            //console.log(rolesList);
+        },function(error){
+            $scope.error = error;
+        })
+    }
+
+    $scope.pageValue=function(){
+    	var promise = pageValuefactory.getValue();  
+            promise.then(function(data){
+            	console.log("page data is "+data.data);
+                $scope.pageData = data.data;
+                //console.log(rolesList);
+            },function(error){
+                $scope.error = error;
+            })
+        }
+
+    $scope.init=function(){
+			$scope.fetchRole();
+			$scope.pageValue();
+        }
+})
+</script>
+
 </head>
-<body id="page-top" class="index">
+<body id="page-top" class="index" ng-app="viewstudentapp" ng-controller="studentviewCtrl" ng-init="init()">
     <div class="col-xl-12">
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom colornav">
     <div class="container">
@@ -54,6 +116,9 @@ for(Cookie cookie : cookies){
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
+			<li class="page-scroll">
+                    <a href="facultypage.jsp">Home</a>
+                </li>
                 <li class="page-scroll">
                     <a onclick="logout()" href="#">Logout</a>
                 </li>
@@ -79,7 +144,8 @@ for(Cookie cookie : cookies){
       <div class="panel-body">
        <ul class="nav-sidebar nav">
         <li><a href="facultyviewcourse.jsp"> View Course</a></li>
-        	<li><a onclick="showContent('addcourse.jsp')" href="#"> Add Course</a></li>
+        	<li><a href="addcontent.jsp"> Add Course Content</a></li>
+        	<li><a href="addcourse.jsp"> Add Course</a></li>
           </ul>
       </div>
   </div>
@@ -108,7 +174,7 @@ for(Cookie cookie : cookies){
     <div id="collapsefour" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingfour">
       <div class="panel-body">
        <ul class="nav-sidebar nav">
-        <li style="background-color: gray;"><a href="facultyviewstudent.jsp">View Student</a></li>
+        <li><a href="facultyviewstudent.jsp" style="background-color: gray;">View Student</a></li>
           </ul>
         </div>
   	</div>
@@ -139,7 +205,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">120</div>
+							<div class="large">{{pageData.admin}}</div>
 							<div class="text-muted">Total Admins</div>
 						</div> 
 					</div>
@@ -152,7 +218,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">24</div>
+							<div class="large">{{pageData.student}}</div>
 							<div class="text-muted">Total Students</div>
 						</div>
 					</div>
@@ -165,7 +231,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked email"><use xlink:href="#stroked-email"/></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">24</div>
+							<div class="large">{{pageData.test}}</div>
 							<div class="text-muted">Total test</div>
 						</div>
 					</div>
@@ -175,64 +241,24 @@ for(Cookie cookie : cookies){
           <h2 style="text-align: center;">Total Student</h2>
           <hr>
         <table class="table sidestyle2">
-            <thead>
+             <thead>
             <tr>
                 <th>S.No.</th>
                 <th>Name </th>
                 <th>Address</th>
                 <th>DOB</th>
-                <th>Contant No.</th>
+                <th>Content No.</th>
                 <th>Institute Name</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Goa</td>
-                <td>05-7-1989</td>
-                <td>0458268452</td>
-                <td>BMPL</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>New York</td>
-                <td>12-8-1993</td>
-                <td>07185268395</td>
-                <td>BMPL</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>Rani</td>
-                <td>Delhi</td>
-                <td>23-5-1993</td>
-                <td>8447586953</td>
-                <td>BMPL</td>
-            </tr>
-            <tr>
-                <th scope="row">4</th>
-                <td>Shayam</td>
-                <td>Haryana</td>
-                <td>1-06-1992</t1d>
-                <td>8447585248</td>
-                <td>BMPL</td>
-            </tr>
-            <tr>
-                <th scope="row">5</th>
-                <td>Larry</td>
-                <td>Bostan</td>
-                <td>12-6-1992</td>
-                <td>4587758693</td>
-                <td>BMPL</td>
-            </tr>
-            <tr>
-                <th scope="row">7</th>
-                <td>Riya</td>
-                <td>Delhi</td>
-                <td>06-11-1993</td>
-                <td>9650922123</td>
-                <td>BMPL</td>
+            <tr ng-repeat="role in rolesList">
+                <th scope="row">{{role.userid}}</th>
+                <td>{{role.name}}</td>
+                <td>{{role.address}}</td>
+                <td>{{role.DOB}}</td>
+                <td>{{role.phone}}</td>
+                <td>{{role.Institute_name}}</td>
             </tr>
             </tbody>
         </form>
@@ -251,4 +277,3 @@ for(Cookie cookie : cookies){
 </footer>
 </body>
 </html>
-<%-- <%}%> --%>

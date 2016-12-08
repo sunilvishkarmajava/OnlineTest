@@ -1,6 +1,6 @@
 body{
-    background: #f1f4f7;
-    margin: 0;
+    background: #f1f4f7 !important;
+    margin: 0px !important;
 }
 .left{
     float: left;
@@ -8,7 +8,7 @@ body{
     height: auto;
 }
 .right{
-    background-color: beige;
+    background-color: beige !important;
     float: right;
     width: 75%; 
     height: auto;
@@ -20,7 +20,7 @@ body{
     content: "";
 }
 .navbar-custom{
- background-color: cornflowerblue;
+ background-color: cornflowerblue !important;
 }
 .panel-heading {
     font-size: 18px;
@@ -30,13 +30,13 @@ body{
     line-height: 45px;
 }
 .navbar-fixed-top {
-    position: relative;
+    position: relative !important;
     right: 0;
     left: 0;
-    margin-bottom: 10px;
+    margin-bottom: 10px !important;
 }
 .navbar-default .navbar-brand {
-    color: white;
+    color: white !important;
 }
 .navbar-nav>li>a{
     color: white !important;
@@ -155,22 +155,9 @@ body{
 .widget-right .text-muted {
     color: #9fadbb;
 }
-#mainContent{
- width: 100%;   
-        position: absolute;
-    left: 200px;
-}
 #teststart{
-    text-align: center;
+	margin-left: 46%;
 }
-#teststart a{
-    padding: 8px;
-    color: black;
-    font-size: 18px;
-    font-weight: 700;
-    background-color: blueviolet;
-    border-radius: 2px
-}
-#teststart a:hover{
-    text-decoration: none;
+.coursedata{
+	margin-left: 20%;
 }

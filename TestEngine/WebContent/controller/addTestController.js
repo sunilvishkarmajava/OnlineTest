@@ -1,3 +1,4 @@
+
 app.controller('uploadQuestionCtrl', function($scope,$http){
 
 	 $scope.facultyId="sunil";
@@ -29,7 +30,31 @@ app.controller('uploadQuestionCtrl', function($scope,$http){
          // called asynchronously if an error occurs
          // or server returns response with an error status.
  });
-};
+}
+	 
+	 $scope.pageValue=function(){
+		 $http({
+	         method : 'POST',
+	         //url : "courseServlet?action=SELECT"
+	         url : "getPagesCommonDataServlet",
+	         data : {'action':'COMMONVALUES'}
+	         ,
+	         headers: {
+	             'Content-Type': 'application/json'
+	         }
+	         
+	 }).success(function(data, status, headers, config) {
+		 $scope.pageData = data;
+	 }).error(function(data, status, headers, config) {
+	         // called asynchronously if an error occurs
+	         // or server returns response with an error status.
+	 });
+	}
+
+$scope.init=function(){
+		$scope.getCommon();
+		$scope.pageValue();
+    }
 	 
 	 
      function submit(courseId,facultyId,testName,testTime,minMarks,totalMarks,questions){

@@ -12,7 +12,7 @@ function logout(){
 	promise.success(function(data){
 		alert("Logout Data is "+data);
 		if(data==="success"){
-			location.href="index.jsp";
+			location.href="logout.jsp";
 			//$("#logoutModal").show();
 			/*$('#logoutModal').modal({
 		        show: 'true'
@@ -23,7 +23,7 @@ function logout(){
 			},2000);
 */		}
 		else{
-			location.href="index.jsp";
+			location.href="logout.jsp";
 		}
 		
 		//alert("Data is "+data);

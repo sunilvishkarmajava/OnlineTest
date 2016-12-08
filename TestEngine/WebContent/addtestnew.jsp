@@ -1,25 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>  
-<%-- <%@jsp:include page="../TestEngine/WebContent/NoCacheServlet"%> --%>
-<%-- <%
-/* response.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
+<%
+response.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
 response.setDateHeader("Expires", 0);
-response.setHeader("Pragma", "no-cache");*/
-RequestDispatcher rd = request.getRequestDispatcher("NoCacheServlet");
-rd.include(request, response);
+response.setHeader("Pragma", "no-cache");
 String user = null;
-if(session.getAttribute("username") == null){
+if(session.getAttribute("username") == null || session.getAttribute("role") == null){
 	response.sendRedirect("index.jsp");
-}else user = (String) session.getAttribute("username");
-String userName = null;
-String sessionID = null;
-Cookie[] cookies = request.getCookies();
-if(cookies !=null){
-for(Cookie cookie : cookies){
-	if(cookie.getName().equals("username")) userName = cookie.getValue();
-	if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
 }
-%> --%>    
+else{ 
+	int role=Integer.parseInt(session.getAttribute("role").toString());
+	if(role!=2){
+		response.sendRedirect("index.jsp");
+	}
+	else{
+	user = (String) session.getAttribute("username");
+	}
+}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +26,7 @@ for(Cookie cookie : cookies){
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="">
-<title>Faculty: Sunil</title>
+<title>Welcome: <%=session.getAttribute("username")%></title>
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <!--<link href="css/freelancer.min.css" rel="stylesheet" type="text/css">-->
 <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -36,8 +34,12 @@ for(Cookie cookie : cookies){
 <link rel="stylesheet" href="css/animate.css">
 <link rel="stylesheet" href="css/adminpage.css">
 <link rel="stylesheet" href="css/addtest.css">
+
+<script src="controller/angular.min.js"></script>
+    <script src="controller/mainController.js"></script>
+    <script src="controller/addTestController.js"></script>
 </head>
-<body id="page-top" class="index">
+<body id="page-top" class="index" ng-app="myApp" ng-controller="uploadQuestionCtrl" ng-init="init()">
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom colornav">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -45,11 +47,14 @@ for(Cookie cookie : cookies){
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand" href="#page-top">Online Test Engine</a>
+            <a class="navbar-brand" href="index.jsp">Online Test Engine</a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
+			<li class="page-scroll">
+                    <a href="facultypage.jsp">Home</a>
+                </li>
                 <li class="page-scroll">
                     <a href="#" onclick="logout()">Logout</a>
       			</li>
@@ -73,8 +78,9 @@ for(Cookie cookie : cookies){
     <div id="collapsetwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingtwo">
       <div class="panel-body">
        <ul class="nav-sidebar nav">
-        <li><a href="viewcourse.jsp"> View Course</a></li>
-        	<li><a onclick="showContent('addcourse.jsp')" href="#"> Add Course</a></li>
+        <li><a href="facultyviewcourse.jsp"> View Course</a></li>
+        	<li><a href="addcontent.jsp"> Add Course Content</a></li>
+        	<li><a href="addcourse.jsp"> Add Course</a></li>
           </ul>
       </div>
   </div>
@@ -88,8 +94,8 @@ for(Cookie cookie : cookies){
     <div id="collapsethree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingthree">
       <div class="panel-body">
        <ul class="nav-sidebar nav">
-        <li style="background-color: gray;"><a href="addtestnew.jsp">Add Test</a></li>
-        <li><a href="viewtest.jsp">Test View</a></li>
+        <li><a href="addtestnew.jsp" style="background-color: gray;">Add Test</a></li>
+        <li><a href="facultyviewtest.jsp">Test View</a></li>
           </ul>
       </div>
   </div>
@@ -103,7 +109,7 @@ for(Cookie cookie : cookies){
     <div id="collapsefour" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingfour">
       <div class="panel-body">
        <ul class="nav-sidebar nav">
-        <li><a href="">View Student</a></li>
+        <li><a href="facultyviewstudent.jsp">View Student</a></li>
           </ul>
         </div>
   	</div>
@@ -117,8 +123,8 @@ for(Cookie cookie : cookies){
     <div id="collapsethree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingthree">
       <div class="panel-body">
        <ul class="nav-sidebar nav">
-			<li><a href="Adminresetpassword.jsp"> Change Password</a></li>
-			<li><a href="Admineditprofile.jsp"> Edit Profile</a></li>
+			<li><a href="facultyresetpassword.jsp"> Change Password</a></li>
+			<li><a href="facultyeditprofile.jsp"> Edit Profile</a></li>
           </ul>
       </div>
   </div>
@@ -135,8 +141,8 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">120</div>
-							<div class="text-muted">Total Admins</div>
+							<div class="large">{{pageData.admin}}</div>
+							<div class="text-muted">Total Admin</div>
 						</div> 
 					</div>
 				</div>
@@ -148,7 +154,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">24</div>
+							<div class="large">{{pageData.student}}</div>
 							<div class="text-muted">Total Students</div>
 						</div>
 					</div>
@@ -161,7 +167,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked email"><use xlink:href="#stroked-email"/></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">24</div>
+							<div class="large">{{pageData.test}}</div>
 							<div class="text-muted">Total test</div>
 						</div>
 					</div>
@@ -170,70 +176,68 @@ for(Cookie cookie : cookies){
 			</div>
 			<div class="row">
          	   <div id="mainContent" class="col-lg-12">
-            		<table class="sidestyle">
-            <form action="" method="post" name="addtest" onsubmit="return validate();">
+            <form method="post" name="addtest" onsubmit="return validate();">
+            <table class="sidestyle">
             <tr>
                 <td class="tablestyle"><label for="facultyid">Faculty ID</label>
-                    <Select name="faculty_id">
-                     <!--<datalist id="Faculty">-->
-                            <option value="Mean1">Mean1</option>
-                            <option value="Java2">Java2</option>
-                            <option value="PHP23">PHP23</option>
-                            <option value="ADVJAVA35">ADVJAVA35</option>
-                            <option value="RUBY23">RUBY23</option>
-                    </Select>
-                     <!--</datalist>-->
+                  <span><h4><%=session.getAttribute("loginid") %></h4></span>
                     <label for="course_id">Course ID</label>
-                    <select name="course_id" placeholder="Select Course ID">
-                        <!--<datalist id="CourseID">-->
-                            <option value="MEAN1">MEAN1</option>
-                            <option value="Java2">Java2</option>
-                            <option value="PHP2">PHP2</option>
-                            <option value="ADVJAVA5">ADVJAVA5</option>
-                            <option value="RUBY3">RUBY3</option>
-                         <!--</datalist>-->
+                    <select name="course_id" ng-model="courseId" ng-change="changeevtcourse()" placeholder="Select Course ID">
+                            <option  ng-repeat="course in courseIdList" value="{{course.courseID}}">{{course.title}}</option>
                 </select>
                     </td>
             </tr>
                <tr>
                 <td class="tablestyle"><label for="testname">Test Name</label>
-                    <input type="text" name="testname" placeholder="Test Name">
+                    <input type="text" name="testname" ng-model="testName" placeholder="Test Name">
                     <label for="testtime">Test Timing</label>
-                    <input type="number" name="testtime" placeholder="Test Duration"></td>
+                    <input type="number" name="testtime" ng-model="testTime" placeholder="Test Duration"></td>
             </tr>
             <tr>
                 <td  class="tablestyle">
                     <label for="minmarks">Minimum Marks</label>
-                    <input type="number" name="minmarks" placeholder="MinMarks">
+                    <input type="number" name="minmarks" ng-model="minMarks" placeholder="MinMarks">
                     <label for="testtime">Total Marks</label>
-                    <input type="number" name="totalmarks" placeholder="Total Marks">
+                    <input type="number" name="totalmarks" ng-model="totalMarks" placeholder="Total Marks">
+                </td>
+            </tr>
+            <tr>
+            <td>
+                <label>Total Question :</label>
+                    <p>{{totalQuestions}}</p>
                 </td>
             </tr>
             <tr>
                 <td>
                     <hr/>
-                    <label for="textareaname" >Question </label>
-                    <textarea  class="textareadetails" name="testquestion" id="textareaname" placeholder="Write Question here...." cols="50px" rows="4"/></textarea>
-                </td>
-                <tr><td>
-            <label for="option_a">Option A</label>
-            <input type="text" placeholder="Option A" name="a"/>
+                    <label for="textareaname" style="vertical-align: top;">Question </label>
+                    <textarea  class="textareadetails" name="testquestion" ng-model="question" id="textareaname" placeholder="Write Question here...." cols="50px" rows="4"/></textarea>
+                </td></tr>
+             <tr><td>
+            <label for="option_A">Option A</label>
+            <input type="text" placeholder="Option A" name="a" ng-model="optionA"/>
                 </td></tr>
             <tr><td>
-                <label for="option_a">Option B</label>
-                <input type="text" placeholder="Option B" name="b"/>
+                <label for="option_B">Option B</label>
+                <input type="text" placeholder="Option B" name="b" ng-model="optionB"/>
             </td></tr>
             <tr><td>
-                <label for="option_a">Option C</label>
-                <input type="text" placeholder="Option C" name="c"/>
+                <label for="option_C">Option C</label>
+                <input type="text" placeholder="Option C" name="c" ng-model="optionC"/>
             </td></tr>
             <tr><td>
-                <label for="option_a">Option D</label>
-                <input type="text" placeholder="Option D" name="d"/>
+                <label for="option_D">Option D</label>
+                <input type="text" placeholder="Option D" name="d" ng-model="optionD"/>
+            </td></tr>
+            <tr><td>
+                <label for="answer">Answer</label>
+                <input type="text" placeholder="Answer" name="d" ng-model="answer"/>
             </td></tr>
             <tr>
                 <td>
-                    <input type="submit" name="add" class="button" value="Add"><button onclick="" name="publish test">Publish Test</button>
+                    <input type="button" ng-click="submit()" class="button" value="Add Question">
+                    <button ng-click="upload()" name="publish test">Publish Test</button>
+                    <p>{{resultMsg.msg}}</p>
                 </td>
             </tr>
             </table>
@@ -241,65 +245,29 @@ for(Cookie cookie : cookies){
         <table class="table sidestyle2">
             <thead>
             <tr>
-                <th>Q</th>
+                <th>Q No.</th>
                 <th>Question:</th>
                 <th>Option A</th>
                 <th>Option B</th>
                 <th>Option C</th>
                 <th>Option D</th>
+                <th>Answer</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Java</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-            </tr>
-            <tr>
-                <th scope="row">4</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-            </tr>
-            <tr>
-                <th scope="row">5</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-            </tr>
-            <tr>
-                <th scope="row">7</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-            </tr>
+           
+            <tr ng-repeat="q in questionListUpload">
+        <th scope="row">{{q.questionNumber}}</td>
+        <td>{{q.question}}</td>
+        <td>{{q.optionA}}</td>
+        <td>{{q.optionB}}</td>
+        <td>{{q.optionC}}</td>
+        <td>{{q.optionD}}</td>
+        <td>{{q.answer}}</td>
+    	</tr>
+        
             </tbody>
-        </form>
+        
         </table>
          <br>
 		</div>
@@ -315,6 +283,8 @@ for(Cookie cookie : cookies){
             </div>
         </div>
 </footer>
+
+</form>
 <script type="application/javascript" src="js/jquery-1.12.3.min.js"></script>
 <script type="application/javascript" src="js/bootstrap.min.js"></script>
 <script src="js/ajax.js"></script>
@@ -323,4 +293,3 @@ for(Cookie cookie : cookies){
 
 </body>
 </html>
-<%-- <%}%> --%>

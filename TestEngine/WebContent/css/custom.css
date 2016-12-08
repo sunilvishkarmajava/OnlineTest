@@ -8,7 +8,7 @@
 .btn-primary.active { color: rgba(255, 255, 255, 0.75); }
 .btn-primary { background-color: #4a77d4; background-image: -moz-linear-gradient(top, #6eb6de, #4a77d4); background-image: -ms-linear-gradient(top, #6eb6de, #4a77d4); background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#6eb6de), to(#4a77d4)); background-image: -webkit-linear-gradient(top, #6eb6de, #4a77d4); background-image: -o-linear-gradient(top, #6eb6de, #4a77d4); background-image: linear-gradient(top, #6eb6de, #4a77d4); background-repeat: repeat-x; filter: progid:dximagetransform.microsoft.gradient(startColorstr=#6eb6de, endColorstr=#4a77d4, GradientType=0);  border: 1px solid #3762bc; text-shadow: 1px 1px 1px rgba(0,0,0,0.4); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.5); }
 .btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] { filter: none; background-color: #4a77d4; }
-.btn-block {width: 100%; display:block;}
+.btn-block {width: 100%; display:block; margin-top: 2%;}
 .btn{display: inline}
 
 .loginpage { 
@@ -26,11 +26,19 @@
 	margin: -150px 0 0 -150px;
 	width:300px;
 	height:300px;
+
 }
-.login h1 { color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3); letter-spacing:1px; text-align:center; }
+.login a{
+    color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3); letter-spacing:1px; text-align:center; margin-bottom: 10%;
+        
+}
+.login h1 { color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3); letter-spacing:1px; text-align:center; margin-bottom: 10%;
+    margin-left: -3%;
+}
 
 input { 
-	width: 100%; 
+    text-align: center;
+	width: 300px; 
 	margin-bottom: 10px; 
 	background: rgba(0,0,0,0.3);
 	border: none;
@@ -105,7 +113,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
  text-decoration-style: double;
 }
 .color{
-    background-color: transparent;
+    background-color: transparent !important;
     color: black;
     opacity: 1;
 }
@@ -116,10 +124,50 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 }
 
 .active {
-    background: blueviolet;
+    background: blueviolet !important;
     color: black;
     transition: 0.8s;
     -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
     -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
 }
+#banner img {
+    margin-top: 100px;
+    width: 100%;
+    position: fixed;
+    z-index: -1;
+    /*opacity: 0.6;*/
+}
+
+/*---------------------------*/
+    #labelstyle{
+    color: white;
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 800;
+    padding-right: 5%;
+}
+/*.forgetlogin h1{
+     color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3); letter-spacing:1px; text-align:center; margin-bottom: 10%;
+    margin-left: -3%;
+}
+.forgetlogin>input{ 
+	width: 300px; 
+	margin-bottom: 10px; 
+	background: rgba(0,0,0,0.3);
+	border: none;
+	outline: none;
+	padding: 10px;
+	font-size: 13px;
+	color: #fff;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+	border: 1px solid rgba(0,0,0,0.3);
+	border-radius: 4px;
+	box-shadow: inset 0 -5px 45px rgba(100,100,100,0.2), 0 1px 1px rgba(255,255,255,0.2);
+	-webkit-transition: box-shadow .5s ease;
+	-moz-transition: box-shadow .5s ease;
+	-o-transition: box-shadow .5s ease;
+	-ms-transition: box-shadow .5s ease;
+	transition: box-shadow .5s ease;
+}*/
+/*---------------------------*/

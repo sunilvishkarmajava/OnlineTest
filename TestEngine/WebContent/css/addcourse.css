@@ -8,7 +8,9 @@ label {
   float:left;
   margin-right:15px;
 }
-
+.formcontent{
+    margin-left: 22%;	
+}
 #form {
   /*background-image: url("../images/addcourseBG.jpg");*/
   background-color: #FFF;*/
@@ -47,14 +49,22 @@ input {
 .button{
   height: auto;
   width: 250px;
-  border: 1px solid #000;
+  background: skyblue !important;
+  border-color: cornsilk;
   margin-top: 10px;
   float: left;
+  margin-left: -40%;
   color: black;
   border-radius: 5px;
   padding: 5px;
-  background: #EBEBEB;
 }
+.button:HOVER{
+	opacity: 0.7;
+}
+.widthbutton{
+	margin-left: 16%;
+}
+
  input:hover{
     background: white;
     transition: 0.5s;
@@ -77,3 +87,6 @@ button:hover{
 .textareadetails:hover{
     background: white;
 }
+	.form-signin{
+		margin-left: 20%;
+	}

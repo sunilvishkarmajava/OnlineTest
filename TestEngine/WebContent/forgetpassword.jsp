@@ -23,7 +23,7 @@
                 <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
             </button>
             
-            <a class="navbar-brand" href="#page-top">Online Test Engine</a>
+            <a class="navbar-brand" href="index.jsp">Online Test Engine</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -55,10 +55,19 @@
    </div>
 <div class="login">
 	<h1>Forget Password</h1>
-    <form method="post">
+    <form method="post" action="sendPasswordServlet">
         <label id="labelstyle" for="">EMAIL</label>
     	<input type="email" name="email" placeholder="Enter Your Email....." required/>
-        <button type="submit" class="btn btn-primary btn-block btn-large">Send Message</button>
+        <button type="submit" class="btn btn-primary btn-block btn-large">Send Password</button>
+        
+          <% String status="";
+        		if(request.getParameter("status")!=null){
+        			status=request.getParameter("status");
+        		}
+        %>
+              
+              <h3><p style="color: black; font-size: 18px; font-weight: 700; margin-top: 25px; margin-right: 300px; capitalize; text-align: center;"><%=status %></p></h3>
+		
     </form>
 </div>
    <footer class="text-center" id="logincontactus">
@@ -91,8 +100,8 @@
                     </ul>
                 </div>
                 <div class="footer-col col-md-4">
-                    <h3>About Online  Test Engine</h3>
-                    <p>Online Test Engine Provide online examination facility to collage students.</p>
+                    <h3>About Online Test Engine</h3>
+					<p>Online Test Engine Provide online examination facility to collage students.</a></p>
                 </div>
             </div>
         </div>

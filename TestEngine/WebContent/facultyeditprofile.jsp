@@ -1,22 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-    <%--     <%
+     <%
 response.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
 response.setDateHeader("Expires", 0);
 response.setHeader("Pragma", "no-cache");
 String user = null;
-if(session.getAttribute("username") == null){
+if(session.getAttribute("username") == null || session.getAttribute("role") == null){
 	response.sendRedirect("index.jsp");
-}else user = (String) session.getAttribute("username");
-String userName = null;
-String sessionID = null;
-Cookie[] cookies = request.getCookies();
-if(cookies !=null){
-for(Cookie cookie : cookies){
-	if(cookie.getName().equals("username")) userName = cookie.getValue();
-	if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
 }
-%> --%>
+else{ 
+	int role=Integer.parseInt(session.getAttribute("role").toString());
+	if(role!=2){
+		response.sendRedirect("index.jsp");
+	}
+	else{
+	user = (String) session.getAttribute("username");
+	}
+}
+%> 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +26,7 @@ for(Cookie cookie : cookies){
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="">
-<title>Welcome: Sunil</title>
+<title>Welcome: <%=session.getAttribute("username")%></title>
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="css/bootstrap.min2.css" rel="stylesheet">
 
@@ -37,8 +38,50 @@ for(Cookie cookie : cookies){
 <link rel="stylesheet" href="css/modify.css">
 <link rel="stylesheet" href="css/Registration.css">
 
+
+<script src="controller/angular.min.js"></script>
+   
+<script>
+var app=angular.module("myApp",[]);
+
+app.factory("pageValuefactory",function($http,$q){
+    var factoryObject = {};
+    factoryObject.getValue=function(){
+       var defer = $q.defer(); $http.post("getPagesCommonDataServlet",{'action':'COMMONVALUES'}).then(function(data){
+            defer.resolve(data)
+        },function(error){
+            defer.reject(error);
+        });
+    return defer.promise;
+    }
+    return factoryObject;
+});
+
+
+app.controller("roleCtrl",function($scope,pageValuefactory){
+	 $scope.pageValue=function(){
+	    	var promise = pageValuefactory.getValue();  
+	            promise.then(function(data){
+	            	console.log("page data is "+data.data);
+	                $scope.pageData = data.data;
+	                //console.log(rolesList);
+	            },function(error){
+	                $scope.error = error;
+	            })
+	        }
+
+	    $scope.init=function(){
+				$scope.pageValue();
+	        }
+	    
+	});
+
+
+
+	</script>
+
 </head>
-<body id="page-top" class="index">
+<body id="page-top" class="index" ng-app="myApp" ng-controller="roleCtrl" ng-init="init()">
     <div class="col-xl-12">
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom colornav">
     <div class="container">
@@ -47,12 +90,15 @@ for(Cookie cookie : cookies){
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand" href="#page-top">Online Test Engine</a>
+            <a class="navbar-brand" href="index.jsp">Online Test Engine</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
+				<li class="page-scroll">
+                    <a href="facultypage.jsp">Home</a>
+                </li>
                 <li class="page-scroll">
                     <a onclick="logout()" href="#">Logout</a>
                 </li>
@@ -78,7 +124,8 @@ for(Cookie cookie : cookies){
       <div class="panel-body">
        <ul class="nav-sidebar nav">
         <li><a href="facultyviewcourse.jsp"> View Course</a></li>
-        	<li><a onclick="showContent('addcourse.jsp')" href="#"> Add Course</a></li>
+        <li><a href="addcontent.jsp"> Add Course Content</a></li>
+        	<li><a href="addcourse.jsp"> Add Course</a></li>
           </ul>
       </div>
   </div>
@@ -122,7 +169,7 @@ for(Cookie cookie : cookies){
       <div class="panel-body">
        <ul class="nav-sidebar nav">
 			<li><a href="facultyresetpassword.jsp"> Change Password</a></li>
-			<li style="background-color: gray;"><a href="facultyeditprofile.jsp"> Edit Profile</a></li>
+			<li><a href="facultyeditprofile.jsp" style="background-color: gray;"> Edit Profile</a></li>
           </ul>
       </div>
   </div>
@@ -138,7 +185,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">120</div>
+							<div class="large">{{pageData.admin}}</div>
 							<div class="text-muted">Total Admins</div>
 						</div> 
 					</div>
@@ -151,7 +198,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">24</div>
+							<div class="large">{{pageData.student}}</div>
 							<div class="text-muted">Total Students</div>
 						</div>
 					</div>
@@ -164,7 +211,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked email"><use xlink:href="#stroked-email"/></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">24</div>
+							<div class="large">{{pageData.test}}</div>
 							<div class="text-muted">Total test</div>
 						</div>
 					</div>
@@ -173,31 +220,32 @@ for(Cookie cookie : cookies){
           <div id="mainContent">
           <h2 style="text-align: center;">Edit Profile</h2>
           <hr>
-        <form class="form-signin" name="ragisterform" onsubmit="return validate();">
+        <form action="editProfileServlet" method="post" enctype="multipart/form-data" class="form-signin" name="ragisterform" onsubmit="return validate();">
                  <!-- <h2 class="form-signin-heading">Please sign in</h2>
                  <br>-->
              <!--<label for="inputname" class="sr-only">Name</label>-->
              <input type="text" name="inputname" class="form-control" placeholder="Type Your Name" id="name" required="required"/>
              <label for="inputage" class="sr-only">Age</label>
              <input type="date" id="inputage" class="form-control" name="Age" required="required" />
-             <label for="inputEmail" class="sr-only">Email address</label>
-             <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required="required" />
-             <label for="passid" class="sr-only">Password</label>
-             <input type="password" id="passid" class="form-control" name="password" placeholder="Password" required="required" />
-             <label for="confirmPassword" class="sr-only"> ConfirmPassword</label>
-             <input type="password" id="confirmPassword" class="form-control" name="confirmpassword" placeholder="Confirm Password" required="required" />
-             <label for="Phone" class="sr-only"> Contect No.</label>
-             <input type="text" id="number" class="form-control" name="mobileno" placeholder="Contect No." required="required" />
+             <label for="Phone" class="sr-only"> Contact No.</label>
+             <input type="text" id="number" class="form-control" name="mobileno" placeholder="Contact No." required="required" />
              <div class="form-control image-file">
-             select Image <input type="file" name="selectedimage">
+             select Image <input type="file" name="filePath">
              </div>
              <label for="address" class="sr-only"> Address</label>
-             <input type="textarea" id="address" class="form-control" name="address" placeholder="Address" required="required" />
+             <input type="text" id="address" class="form-control" name="address" placeholder="Address" required="required" />
              <label for="institute" class="sr-only"> Institute Name</label>
              <input type="text" id="institute" class="form-control" name="institute" placeholder="Institute Name" required="required"/>
                   <div class="checkbox">
                                     <input type="submit" class="btn btn-primary btn-block btn-large" value="Register"/>
-                  </div>
+                                    
+                     <% String status="";
+        		if(request.getParameter("status")!=null){
+        			status=request.getParameter("status");
+        		}
+        %>
+        <h3><p style="color: black; margin: 40px;text-transform: capitalize;"><%=status %></p></h3>
+                    </div>
               </form>
     </div>
     </div>

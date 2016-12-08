@@ -1,25 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>  
-<%-- <%@jsp:include page="../TestEngine/WebContent/NoCacheServlet"%> --%>
-<%-- <%
+<%
 response.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
 response.setDateHeader("Expires", 0);
 response.setHeader("Pragma", "no-cache");
-/* RequestDispatcher rd = request.getRequestDispatcher("NoCacheServlet");
-rd.include(request, response); */
 String user = null;
-if(session.getAttribute("username") == null){
+if(session.getAttribute("username") == null || session.getAttribute("role") == null){
 	response.sendRedirect("index.jsp");
-}else user = (String) session.getAttribute("username");
-String userName = null;
-String sessionID = null;
-Cookie[] cookies = request.getCookies();
-if(cookies !=null){
-for(Cookie cookie : cookies){
-	if(cookie.getName().equals("username")) userName = cookie.getValue();
-	if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
 }
-%> --%>
+else{ 
+	int role=Integer.parseInt(session.getAttribute("role").toString());
+	if(role!=1){
+		response.sendRedirect("index.jsp");
+	}
+	else{
+	user = (String) session.getAttribute("username");
+	}
+}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,15 +26,56 @@ for(Cookie cookie : cookies){
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="">
-<title>Admin: Sunil</title>
+<title>Welcome: <%=session.getAttribute("username")%></title>
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <!--<link href="css/freelancer.min.css" rel="stylesheet" type="text/css">-->
 <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
 <link href="https://fonts.googleapis.com/css?family=Ubuntu:500|Vollkorn" rel="stylesheet">
 <link rel="stylesheet" href="css/animate.css">
 <link rel="stylesheet" href="css/adminpage.css">
+
+<script src="controller/angular.min.js"></script>
+<script>
+var app=angular.module("myApp",[]);
+
+app.factory("pageValuefactory",function($http,$q){
+    var factoryObject = {};
+    factoryObject.getValue=function(){
+       var defer = $q.defer(); $http.post("getPagesCommonDataServlet",{'action':'COMMONVALUES'}).then(function(data){
+            defer.resolve(data)
+        },function(error){
+            defer.reject(error);
+        });
+    return defer.promise;
+    }
+    return factoryObject;
+});
+
+
+app.controller("roleCtrl",function($scope,pageValuefactory){
+	 $scope.pageValue=function(){
+	    	var promise = pageValuefactory.getValue();  
+	            promise.then(function(data){
+	            	console.log("page data is "+data.data);
+	                $scope.pageData = data.data;
+	                //console.log(rolesList);
+	            },function(error){
+	                $scope.error = error;
+	            })
+	        }
+
+	    $scope.init=function(){
+				$scope.pageValue();
+	        }
+	    
+	});
+
+
+
+	</script>
+
 </head>
-<body id="page-top" class="index">
+<body id="page-top" class="index" ng-app="myApp" ng-controller="roleCtrl" ng-init="init()">
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom colornav">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -44,12 +83,15 @@ for(Cookie cookie : cookies){
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand" href="#page-top">Welcome: Sunil Sharma</a>
+            <a class="navbar-brand" href="index.jsp">Online Test Engine</a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                 <li class="page-scroll">
+                    <a href="AdminPage.jsp">Home</a>
+                </li>
+				<li class="page-scroll">
                     <a href="#" onclick="logout()">Logout</a>
       			</li>
             </ul>
@@ -86,7 +128,7 @@ for(Cookie cookie : cookies){
     <div id="collapsetwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingtwo">
       <div class="panel-body">
        <ul class="nav-sidebar nav">
-        <li><a onclick="showContent('addteacher.jsp')" href="#">Add Faculty</a></li>
+        <li><a href="addfaculty.jsp">Add Faculty</a></li>
           </ul>
       </div>
   </div>
@@ -146,7 +188,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked bag"><use xlink:href="#stroked-male-user"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">120</div>
+							<div class="large">{{pageData.student}}</div>
 							<div class="text-muted">Total Students</div>
 						</div> 
 					</div>
@@ -159,7 +201,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked empty-message"><use xlink:href="#stroked-empty-message"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">52</div>
+							<div class="large">{{pageData.query}}</div>
 							<div class="text-muted">Query</div>
 						</div>
 					</div>
@@ -172,7 +214,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">50</div>
+							<div class="large">{{pageData.faculty}}</div>
 							<div class="text-muted">Total Faculty</div>
 						</div>
 					</div>
@@ -185,7 +227,7 @@ for(Cookie cookie : cookies){
 							<svg class="glyph stroked app-window-with-content"><use xlink:href="#stroked-app-window-with-content"></use></svg>
 						</div>
 						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">20</div>
+							<div class="large">{{pageData.test}}</div>
 							<div class="text-muted">Total Tests</div>
 						</div>
 					</div>
@@ -193,7 +235,7 @@ for(Cookie cookie : cookies){
 			</div>
          	   <div id="mainContent">
          	   <div class="col-xs-12">
-            <img src="images/banner_bg.jpg" alt="online Exam">
+            <img src="images/banner_bg.jpg" class="imagewidth" alt="online Exam">
 		</div>
          	   </div>
 		</div>
@@ -208,7 +250,7 @@ for(Cookie cookie : cookies){
             </div>
         </div>
 </footer>
-<script type="application/javascript" src="js/jquery-1.12.3.min.js"></script>
+<script type="application/javascript" src="js/jquery-2.0.3.min.js"></script>
 <script type="application/javascript" src="js/bootstrap.min.js"></script>
 <script src="js/ajax.js"></script>
 <script src="js/lumino.glyphs.js"></script>
