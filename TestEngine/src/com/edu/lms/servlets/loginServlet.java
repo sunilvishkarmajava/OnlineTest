@@ -13,7 +13,6 @@ import javax.servlet.http.HttpSession;
 
 import com.edu.lms.dao.loginDAO;
 import com.edu.lms.dto.loginDTO;
-import com.edu.lms.dto.userDTO;
 import com.edu.lms.utils.Encryption2;
 
 /**
